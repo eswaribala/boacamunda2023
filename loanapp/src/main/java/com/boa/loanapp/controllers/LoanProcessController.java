@@ -2,6 +2,7 @@ package com.boa.loanapp.controllers;
 
 import io.camunda.zeebe.client.ZeebeClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import java.util.Map;
 @Slf4j
 public class LoanProcessController {
 
+    @Autowired
     private ZeebeClient zeebeClient;
 
    @PostMapping("/v1.0/")
