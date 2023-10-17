@@ -24,21 +24,7 @@ public class LoanappApplication {
         SpringApplication.run(LoanappApplication.class, args);
     }
 
-    @JobWorker(name = "random_number_task",autoComplete = true)
-    public Map<String,Object> handleRandomNumberGenerator(final JobClient jobClient, final ActivatedJob activatedJob){
 
-        Map<String, Object> map=new HashMap<String,Object>();
-        map.put("loanNo", new Random().nextInt(1000000));
-
-        jobClient.newCompleteCommand(activatedJob.getKey())
-                .variables(map)
-                .send()
-                .exceptionally(throwable -> {
-                    throw new RuntimeException("Could not complete job " + jobClient, throwable);
-                });
-        log.info("job done...");
-        return map;
-    }
 
 
 

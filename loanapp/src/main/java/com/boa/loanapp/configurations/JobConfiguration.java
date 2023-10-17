@@ -1,5 +1,5 @@
 package com.boa.loanapp.configurations;
-/*
+
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobClient;
 import io.camunda.zeebe.spring.client.annotation.JobWorker;
@@ -13,11 +13,11 @@ import java.util.Random;
 @Configuration
 @Slf4j
 public class JobConfiguration {
-    @JobWorker(name = "random_number_task")
+    @JobWorker(type = "random_number_task")
     public Map<String,Object> handleRandomNumberGenerator(final JobClient jobClient, final ActivatedJob activatedJob){
 
         Map<String, Object> map=new HashMap<String,Object>();
-        map.put("loanNo", new Random().nextInt(1000000));
+        map.put("loanApplicationNo", new Random().nextInt(1000000));
 
         jobClient.newCompleteCommand(activatedJob.getKey())
                 .variables(map)
@@ -29,4 +29,4 @@ public class JobConfiguration {
         return map;
     }
 
-}*/
+}
