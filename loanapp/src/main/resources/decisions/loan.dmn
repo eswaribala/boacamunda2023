@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="Definitions_Loan" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.15.2" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0">
   <decision id="Decision_DSS" name="Loan Decision Support System">
-    <decisionTable id="DecisionTable_0k2kqs3">
+    <decisionTable id="DecisionTable_0k2kqs3" hitPolicy="FIRST">
       <input id="Input_1">
         <inputExpression id="InputExpression_1" typeRef="number">
           <text>age</text>
@@ -52,7 +52,7 @@
           <text>[58..80]</text>
         </inputEntry>
         <inputEntry id="UnaryTests_029x7rz">
-          <text>[800..900]</text>
+          <text>[500..650]</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0jg3xwv">
           <text>true</text>
