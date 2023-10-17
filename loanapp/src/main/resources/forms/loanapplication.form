@@ -106,7 +106,7 @@
         },
         {
           "label": "Government",
-          "value": "Government"
+          "value": "government"
         },
         {
           "label": "Self Employed Professional",
@@ -127,10 +127,40 @@
       }
     },
     {
+      "label": "CIBIL Score",
+      "type": "number",
+      "layout": {
+        "row": "Row_1hcqvvb",
+        "columns": null
+      },
+      "id": "Field_0okhc76",
+      "key": "cibilScore",
+      "increment": "50",
+      "decimalDigits": 0,
+      "validate": {
+        "required": true,
+        "min": 100,
+        "max": 900
+      }
+    },
+    {
+      "label": "Having Own House?",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_1c12viv",
+        "columns": null
+      },
+      "id": "Field_1yuqqn2",
+      "key": "ownHouse",
+      "validate": {
+        "required": true
+      }
+    },
+    {
       "label": "Is Everything Correct?",
       "type": "checkbox",
       "layout": {
-        "row": "Row_1hcqvvb",
+        "row": "Row_1c12viv",
         "columns": null
       },
       "id": "Field_1uyxpi8",
