@@ -13,7 +13,7 @@ import java.util.Random;
 @Configuration
 @Slf4j
 public class JobConfiguration {
-    @JobWorker(type = "random_number_task")
+    @JobWorker(type = "random_number_task",autoComplete = false)
     public Map<String,Object> handleRandomNumberGenerator(final JobClient jobClient, final ActivatedJob activatedJob){
 
         Map<String, Object> map=new HashMap<String,Object>();
@@ -27,6 +27,23 @@ public class JobConfiguration {
                 });
         log.info("job done...");
         return map;
+    }
+
+
+    @JobWorker(type = "show_generated_application_no",autoComplete = false)
+    public void displayGeneratedApplicationNo(final JobClient jobClient, final  ActivatedJob activatedJob){
+          Map<String,Object> map=    activatedJob.getVariablesAsMap();
+
+          log.info("Show the Generated Application No", map.get("loanApplicationNo"));
+
+        jobClient.newCompleteCommand(activatedJob.getKey())
+               // .variables(map)
+                .send()
+                .exceptionally(throwable -> {
+                    throw new RuntimeException("Could not complete job " + jobClient, throwable);
+                });
+        log.info("job done...");
+
     }
 
 }
