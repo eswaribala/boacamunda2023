@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @SpringBootApplication
 @Slf4j
@@ -22,5 +23,9 @@ public class LoanappApplication {
     public static void main(String[] args) {
         SpringApplication.run(LoanappApplication.class, args);
     }
+
+
+
+
 
 }
