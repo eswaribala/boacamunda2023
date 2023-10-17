@@ -13,7 +13,7 @@ import java.util.Random;
 @Configuration
 @Slf4j
 public class JobConfiguration {
-    @JobWorker(name = "random_number_task",autoComplete = true)
+    @JobWorker(name = "random_number_task")
     public Map<String,Object> handleRandomNumberGenerator(final JobClient jobClient, final ActivatedJob activatedJob){
 
         Map<String, Object> map=new HashMap<String,Object>();
