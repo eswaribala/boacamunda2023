@@ -61,10 +61,10 @@ public class JobConfiguration {
         System.out.println("Show the Generated Application No "+map.get("loanApplicationNo"));
         LocalDate dob= LocalDate.parse (map.get("dob").toString());
         HashMap<String, Object> ageMap=new HashMap<String,Object>();
-        long age=0;
-        if(dob.isBefore(LocalDate.now())) {
+       long age=ChronoUnit.YEARS.between(dob,LocalDate.now());
+        if((dob.isBefore(LocalDate.now())) && (age>21)){
 
-            age=ChronoUnit.YEARS.between(dob,LocalDate.now());
+
             ageMap.put("age",age);
             ageMap.put("checkdob",true);
             jobClient.newCompleteCommand(activatedJob.getKey())
