@@ -30,9 +30,7 @@ public class JobConfiguration {
                 .exceptionally(throwable -> {
                     throw new RuntimeException("Could not complete job " + jobClient, throwable);
                 });
-        log.info("job done...");
-
-		
+        log.info("job done...");		
 		
 		
 	}

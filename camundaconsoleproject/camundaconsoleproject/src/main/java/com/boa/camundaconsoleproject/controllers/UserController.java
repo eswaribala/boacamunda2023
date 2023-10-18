@@ -1,6 +1,10 @@
 package com.boa.camundaconsoleproject.controllers;
 
+import java.time.Duration;
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +41,23 @@ public class UserController {
 
    }
 
-	
+   @GetMapping("/v1.0/")
+   public void triggerMessageEvent(){
+     
+    zeebeClient.newPublishMessageCommand().messageName("message_trigger_api_call")
+    .correlationKey(String.valueOf(new Random().nextInt(10000)))
+    .timeToLive(Duration.ofMinutes(2))
+    .send()
+
+    .exceptionally(throwable -> {
+        throw new RuntimeException("Could not complete job " + zeebeClient, throwable);
+    });
+    log.info("Message published");
+
+      
+
+
+
+  }
 
 }
