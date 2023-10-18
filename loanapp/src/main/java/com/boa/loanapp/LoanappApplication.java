@@ -17,7 +17,7 @@ import java.util.Random;
 
 @SpringBootApplication
 @Slf4j
-@Deployment(resources = "classpath*:/processes/**/*.bpmn")
+@Deployment(resources ={ ("classpath*:/processes/**/*.bpmn"),("classpath*:/decisions/**/*.dmn")})
 public class LoanappApplication {
 
     public static void main(String[] args) {

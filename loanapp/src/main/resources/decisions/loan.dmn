@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="Definitions_Loan" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.15.2" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0">
   <decision id="Decision_DSS" name="Loan Decision Support System">
-    <decisionTable id="DecisionTable_0k2kqs3" hitPolicy="FIRST">
+    <decisionTable id="DecisionTable_0k2kqs3">
       <input id="Input_1">
         <inputExpression id="InputExpression_1" typeRef="number">
           <text>age</text>
@@ -32,10 +32,10 @@
       </output>
       <rule id="DecisionRule_0yqj4vj">
         <inputEntry id="UnaryTests_0c590v6">
-          <text>[35..55]</text>
+          <text>[35..57]</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0ebinz4">
-          <text>[700..900]</text>
+          <text>[750..900]</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0gj4bue">
           <text>true</text>
@@ -49,10 +49,10 @@
       </rule>
       <rule id="DecisionRule_0jtd7y2">
         <inputEntry id="UnaryTests_0wfkyej">
-          <text>[58..80]</text>
+          <text>[57..80]</text>
         </inputEntry>
         <inputEntry id="UnaryTests_029x7rz">
-          <text>[500..650]</text>
+          <text>[600..800]</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0jg3xwv">
           <text>true</text>
@@ -66,10 +66,10 @@
       </rule>
       <rule id="DecisionRule_14plfhc">
         <inputEntry id="UnaryTests_1rk0p6o">
-          <text>[22..34]</text>
+          <text>&lt;=25</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0uvzmxf">
-          <text>[600..700]</text>
+          <text>[650..700]</text>
         </inputEntry>
         <inputEntry id="UnaryTests_05pgspj">
           <text>false</text>
@@ -78,23 +78,6 @@
           <text>"private"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_04d833s">
-          <text>"rejected"</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_190l5xw">
-        <inputEntry id="UnaryTests_048tz9r">
-          <text></text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1ysrhf1">
-          <text></text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1kqhs83">
-          <text></text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0z1ncb1">
-          <text></text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0e1buor">
           <text>"rejected"</text>
         </outputEntry>
       </rule>
