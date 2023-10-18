@@ -1,0 +1,1 @@
+git clone https://github.com/pinussilvestrus/camunda-modeler-excel-import-plugin.git
