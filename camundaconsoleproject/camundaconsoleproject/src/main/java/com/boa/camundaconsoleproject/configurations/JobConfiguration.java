@@ -1,11 +1,9 @@
 package com.boa.camundaconsoleproject.configurations;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.springframework.context.annotation.Configuration;
 
-import com.github.wnameless.json.flattener.JsonFlattener;
 
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobClient;
