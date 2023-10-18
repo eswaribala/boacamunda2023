@@ -1,5 +1,6 @@
 package com.boa.camundaconsoleproject.configurations;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.context.annotation.Configuration;
@@ -17,21 +18,36 @@ public class JobConfiguration {
 	
 
 	@JobWorker(type = "fetch-users",autoComplete = false)
-	public void fetchUserData(final JobClient jobClient, final ActivatedJob activatedJob) {
+	public Map<String,Object> fetchUserData(final JobClient jobClient, final ActivatedJob activatedJob) {
 		
 		Map<String,Object> map=activatedJob.getVariablesAsMap();
 		
 	    System.out.println(map.get("users"));
 		
-		
+	    Map<String,Object> checkMap=new HashMap<String,Object>();
+	    if(map.containsKey("users")) {
+		checkMap.put("status", true);
         jobClient.newCompleteCommand(activatedJob.getKey())
-               // .variables(map)
+               .variables(checkMap)
                 .send()
                 .exceptionally(throwable -> {
                     throw new RuntimeException("Could not complete job " + jobClient, throwable);
                 });
+        
+	    }
+	    else
+	    {
+	    	checkMap.put("status", false);
+	        jobClient.newCompleteCommand(activatedJob.getKey())
+	               .variables(checkMap)
+	                .send()
+	                .exceptionally(throwable -> {
+	                    throw new RuntimeException("Could not complete job " + jobClient, throwable);
+	                });
+	    }
+	    	
         log.info("job done...");		
-		
+		return checkMap;
 		
 	}
 	

@@ -43,6 +43,7 @@ public class UserController {
 
    @GetMapping("/v1.0/")
    public void triggerMessageEvent(){
+
      
     zeebeClient.newPublishMessageCommand().messageName("message_trigger_api_call")
     .correlationKey(String.valueOf(new Random().nextInt(10000)))
