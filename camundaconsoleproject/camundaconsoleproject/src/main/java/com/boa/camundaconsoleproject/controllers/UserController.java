@@ -43,7 +43,7 @@ public class UserController {
 
    @GetMapping("/v1.0/")
    public void triggerMessageEvent(){
-
+      
      
     zeebeClient.newPublishMessageCommand().messageName("message_trigger_api_call")
     .correlationKey(String.valueOf(new Random().nextInt(10000)))
@@ -60,5 +60,23 @@ public class UserController {
 
 
   }
+   @GetMapping("/subprocess/v1.0/")
+   public void triggerSubProcessMessageEvent(){
+      
+     
+    zeebeClient.newPublishMessageCommand().messageName("message_event_subprocess")
+    .correlationKey("100")
+    .timeToLive(Duration.ofMinutes(2))
+    .send()
 
+    .exceptionally(throwable -> {
+        throw new RuntimeException("Could not complete job " + zeebeClient, throwable);
+    });
+    log.info("Message published");
+
+      
+
+
+
+  }
 }

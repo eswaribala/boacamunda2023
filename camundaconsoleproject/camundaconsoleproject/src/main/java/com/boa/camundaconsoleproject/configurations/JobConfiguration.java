@@ -23,10 +23,12 @@ public class JobConfiguration {
 		Map<String,Object> map=activatedJob.getVariablesAsMap();
 		
 	    System.out.println(map.get("users"));
+	    
 		
 	    Map<String,Object> checkMap=new HashMap<String,Object>();
 	    if(map.containsKey("users")) {
 		checkMap.put("status", true);
+		checkMap.put("counter", map.size());
         jobClient.newCompleteCommand(activatedJob.getKey())
                .variables(checkMap)
                 .send()
@@ -51,7 +53,42 @@ public class JobConfiguration {
 		
 	}
 	
-	
+	@JobWorker(type = "verify_user_count",autoComplete = false)
+	public Map<String,Object> verifyUserCount(final JobClient jobClient, final ActivatedJob activatedJob) {
+		
+		Map<String,Object> map=activatedJob.getVariablesAsMap();
+		
+		int count=Integer.parseInt(map.get("counter").toString());
+		
+	    System.out.println(map.get("count"));
+		
+	    Map<String,Object> countMap=new HashMap<String,Object>();
+	    if(count>=10) {
+		 log.info("Mail Triggered");
+		 countMap.put("count", count);
+        jobClient.newCompleteCommand(activatedJob.getKey())
+               .variables(countMap)
+                .send()
+                .exceptionally(throwable -> {
+                    throw new RuntimeException("Could not complete job " + jobClient, throwable);
+                });
+        
+	    }
+	    else
+	    {
+	    	countMap.put("count", 0);
+	        jobClient.newCompleteCommand(activatedJob.getKey())
+	               .variables(countMap)
+	                .send()
+	                .exceptionally(throwable -> {
+	                    throw new RuntimeException("Could not complete job " + jobClient, throwable);
+	                });
+	    }
+	    	
+        log.info("job done...");		
+		return countMap;
+		
+	}
 
 	
 }
