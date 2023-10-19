@@ -70,6 +70,7 @@ public class KafkaProducerConfiguration {
             } catch (InterruptedException ex) {
             }
         }
+        producer.close();
         map.put("camundaMessages", messages);
         jobClient.newCompleteCommand(activatedJob.getKey())
         .variables(map)
