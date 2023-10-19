@@ -60,23 +60,5 @@ public class UserController {
 
 
   }
-   @GetMapping("/subprocess/v1.0/")
-   public void triggerSubProcessMessageEvent(){
-      
-     
-    zeebeClient.newPublishMessageCommand().messageName("message_event_subprocess")
-    .correlationKey("100")
-    .timeToLive(Duration.ofMinutes(30))
-    .send()
-
-    .exceptionally(throwable -> {
-        throw new RuntimeException("Could not complete job " + zeebeClient, throwable);
-    });
-    log.info("Message published");
-
-      
-
-
-
-  }
+  
 }

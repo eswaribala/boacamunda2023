@@ -1,11 +1,13 @@
 package com.boa.camundaconsoleproject.configurations;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
-
+import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobClient;
 import io.camunda.zeebe.spring.client.annotation.JobWorker;
@@ -15,7 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @Slf4j
 public class JobConfiguration {
-	
+	@Autowired
+	private ZeebeClient zeebeClient;
 
 	@JobWorker(type = "fetch-users",autoComplete = false)
 	public Map<String,Object> fetchUserData(final JobClient jobClient, final ActivatedJob activatedJob) {
@@ -29,6 +32,17 @@ public class JobConfiguration {
 	    if(map.containsKey("users")) {
 		checkMap.put("status", true);
 		checkMap.put("counter", map.size());
+		 zeebeClient.newPublishMessageCommand().messageName("message_event_subprocess")
+		    .correlationKey("100")
+		    .timeToLive(Duration.ofMinutes(30))
+		    .send()
+
+		    .exceptionally(throwable -> {
+		        throw new RuntimeException("Could not complete job " + zeebeClient, throwable);
+		    });
+		    log.info("Message published");
+
+		
         jobClient.newCompleteCommand(activatedJob.getKey())
                .variables(checkMap)
                 .send()
@@ -40,6 +54,15 @@ public class JobConfiguration {
 	    else
 	    {
 	    	checkMap.put("status", false);
+	    	 zeebeClient.newPublishMessageCommand().messageName("message_event_subprocess")
+			    .correlationKey("100")
+			    .timeToLive(Duration.ofMinutes(30))
+			    .send()
+
+			    .exceptionally(throwable -> {
+			        throw new RuntimeException("Could not complete job " + zeebeClient, throwable);
+			    });
+			    log.info("Message published");
 	        jobClient.newCompleteCommand(activatedJob.getKey())
 	               .variables(checkMap)
 	                .send()
