@@ -17,7 +17,7 @@ import io.camunda.zeebe.client.api.worker.JobClient;
 import io.camunda.zeebe.spring.client.annotation.JobWorker;
 
 @Configuration
-public class KafkaConfiguration {
+public class KafkaProducerConfiguration {
     @Value("${TOPIC_NAME}")
 	private  String topicName;
     @Value("${password}")
