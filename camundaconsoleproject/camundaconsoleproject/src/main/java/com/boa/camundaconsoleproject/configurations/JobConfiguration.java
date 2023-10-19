@@ -32,15 +32,7 @@ public class JobConfiguration {
 	    if(map.containsKey("users")) {
 		checkMap.put("status", true);
 		checkMap.put("counter", map.size());
-		 zeebeClient.newPublishMessageCommand().messageName("message_event_subprocess")
-		    .correlationKey("100")
-		    .timeToLive(Duration.ofMinutes(30))
-		    .send()
-
-		    .exceptionally(throwable -> {
-		        throw new RuntimeException("Could not complete job " + zeebeClient, throwable);
-		    });
-		    log.info("Message published");
+		 
 
 		
         jobClient.newCompleteCommand(activatedJob.getKey())
@@ -54,15 +46,7 @@ public class JobConfiguration {
 	    else
 	    {
 	    	checkMap.put("status", false);
-	    	 zeebeClient.newPublishMessageCommand().messageName("message_event_subprocess")
-			    .correlationKey("100")
-			    .timeToLive(Duration.ofMinutes(30))
-			    .send()
-
-			    .exceptionally(throwable -> {
-			        throw new RuntimeException("Could not complete job " + zeebeClient, throwable);
-			    });
-			    log.info("Message published");
+	    	 
 	        jobClient.newCompleteCommand(activatedJob.getKey())
 	               .variables(checkMap)
 	                .send()
