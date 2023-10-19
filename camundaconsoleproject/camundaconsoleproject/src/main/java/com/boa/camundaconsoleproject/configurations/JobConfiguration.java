@@ -81,14 +81,14 @@ public class JobConfiguration {
 		
 		Map<String,Object> map=activatedJob.getVariablesAsMap();
 		
-		int count=Integer.parseInt(map.get("counter").toString());
+		//int count=Integer.parseInt(map.get("counter").toString());
 		
-	    System.out.println(count);
+	    //System.out.println(count);
 		
 	    Map<String,Object> countMap=new HashMap<String,Object>();
-	    if(count>=1) {
+	    if(map.size()>1) {
 		 log.info("Mail Triggered");
-		 countMap.put("count", count);
+		 countMap.put("count", 1);
         jobClient.newCompleteCommand(activatedJob.getKey())
                .variables(countMap)
                 .send()
