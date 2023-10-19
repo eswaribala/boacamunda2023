@@ -66,7 +66,7 @@ public class UserController {
      
     zeebeClient.newPublishMessageCommand().messageName("message_event_subprocess")
     .correlationKey("100")
-    .timeToLive(Duration.ofMinutes(2))
+    .timeToLive(Duration.ofMinutes(30))
     .send()
 
     .exceptionally(throwable -> {

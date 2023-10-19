@@ -23,7 +23,7 @@ public class JobConfiguration {
 		Map<String,Object> map=activatedJob.getVariablesAsMap();
 		
 	    System.out.println(map.get("users"));
-	    
+	    System.out.println("Map Size"+map.size());
 		
 	    Map<String,Object> checkMap=new HashMap<String,Object>();
 	    if(map.containsKey("users")) {
@@ -60,10 +60,10 @@ public class JobConfiguration {
 		
 		int count=Integer.parseInt(map.get("counter").toString());
 		
-	    System.out.println(map.get("count"));
+	    System.out.println(count);
 		
 	    Map<String,Object> countMap=new HashMap<String,Object>();
-	    if(count>=10) {
+	    if(count>=1) {
 		 log.info("Mail Triggered");
 		 countMap.put("count", count);
         jobClient.newCompleteCommand(activatedJob.getKey())
