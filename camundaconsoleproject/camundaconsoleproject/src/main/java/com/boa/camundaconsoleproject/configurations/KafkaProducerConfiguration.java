@@ -37,7 +37,7 @@ public class KafkaProducerConfiguration {
     @Value("${keystoretype}")
     private String keyStoreType;
   
-    @JobWorker(type = "",autoComplete = false)
+    @JobWorker(type = "message_publisher",autoComplete = false)
     public Map<String,Object> triggerMessagePublishing(final JobClient jobClient, final ActivatedJob activatedJob){
     	
     	

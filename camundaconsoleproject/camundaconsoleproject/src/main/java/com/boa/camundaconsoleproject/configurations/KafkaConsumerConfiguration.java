@@ -12,6 +12,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -58,8 +59,9 @@ public class KafkaConsumerConfiguration {
 	        properties.setProperty("ssl.keystore.location", keyStoreLocation);
 	        properties.setProperty("ssl.keystore.password", keyStorePassword);
 	        properties.setProperty("ssl.key.password", keyPassword);
-	        properties.setProperty("key.serializer", StringSerializer.class.getName());
-	        properties.setProperty("value.serializer", StringSerializer.class.getName());
+	        properties.setProperty("key.deserializer", StringDeserializer.class.getName());
+	        properties.setProperty("value.deserializer", StringDeserializer.class.getName());
+	        properties.setProperty("group.id", "groupid");
 	     // create a consumer
 	        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
 
