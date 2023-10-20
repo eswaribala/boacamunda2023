@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @Slf4j
 public class RoleConfiguration {
-	@JobWorker(type = "assign-activity",autoComplete = false)
+	@JobWorker(type = "assign_activity",autoComplete = false)
 	public Map<String,Object> verifyUserCount(final JobClient jobClient, final ActivatedJob activatedJob) {
 		
 	
@@ -21,6 +21,8 @@ public class RoleConfiguration {
 	    Map<String,Object> activityMap=new HashMap<String,Object>();
 	    
 		 activityMap.put("activity", "codedevelopment");
+		 activityMap.put("assignee", "");
+		 activityMap.put("candidateusers", "");
         jobClient.newCompleteCommand(activatedJob.getKey())
                .variables(activityMap)
                 .send()
@@ -29,7 +31,7 @@ public class RoleConfiguration {
                 });
        
 	    	
-        log.info("job done...");		
+        log.info("Role job done...");		
 		return activityMap;
 		
 	}
