@@ -1,0 +1,16 @@
+<div class="panel panel-default">
+  <div class="ten wide column centered">
+    <h1>{{title}}</h1>
+  </div>
+  <div class="form-group">
+    <div class="nav nav-tabs">
+      <a routerLink="/home" class="col-3">Home</a>
+      <a routerLink="/processlist" class="col-3">Start Process</a>
+      <a routerLink="/tasklist" class="col-3">Tasklist</a>
+    </div>
+    <div class="form-group">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+
