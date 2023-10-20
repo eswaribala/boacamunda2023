@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_18h200c" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="uploaddoc" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_09trrpe</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_09trrpe" sourceRef="StartEvent_1" targetRef="upload_pdf_activity" />
+    <bpmn:sequenceFlow id="Flow_1ud424n" sourceRef="upload_pdf_activity" targetRef="download_pdf_activity" />
+    <bpmn:endEvent id="Event_1cj6hn4">
+      <bpmn:incoming>Flow_0oadhuc</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_07gyhyt" sourceRef="download_pdf_activity" targetRef="Gateway_1rj388t" />
+    <bpmn:userTask id="upload_pdf_activity" name="Upload AdharCard" camunda:formKey="embedded:/forms/task-form-pdf-upload.html" camunda:assignee="demo">
+      <bpmn:incoming>Flow_09trrpe</bpmn:incoming>
+      <bpmn:incoming>Flow_0ays0oi</bpmn:incoming>
+      <bpmn:incoming>Flow_1xuz123</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ud424n</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="download_pdf_activity" name="Review AdharCard" camunda:formKey="embedded:/forms/task-form-pdf-viewer.html" camunda:assignee="demo">
+      <bpmn:incoming>Flow_1ud424n</bpmn:incoming>
+      <bpmn:outgoing>Flow_07gyhyt</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:subProcess id="Activity_1lfg3w8">
+      <bpmn:incoming>Flow_161nhaj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0oadhuc</bpmn:outgoing>
+      <bpmn:startEvent id="Event_11kpjpx">
+        <bpmn:outgoing>Flow_0udpldl</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_0udpldl" sourceRef="Event_11kpjpx" targetRef="CallLoanProcessActivity" />
+      <bpmn:callActivity id="CallLoanProcessActivity" name="Call Loan Process" calledElement="loanapi">
+        <bpmn:extensionElements>
+          <camunda:in variables="all" />
+          <camunda:out variables="all" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0udpldl</bpmn:incoming>
+        <bpmn:outgoing>Flow_0km1in1</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:exclusiveGateway id="Gateway_0r4ox3t">
+        <bpmn:incoming>Flow_0km1in1</bpmn:incoming>
+        <bpmn:outgoing>Flow_1rxh587</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0p8nlgp</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_0km1in1" sourceRef="CallLoanProcessActivity" targetRef="Gateway_0r4ox3t" />
+      <bpmn:sequenceFlow id="Flow_1rxh587" sourceRef="Gateway_0r4ox3t" targetRef="LoanRejectedErrorEvent">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{action == "Rejected"}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:endEvent id="LoanAcceptedEvent">
+        <bpmn:incoming>Flow_0p8nlgp</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0p8nlgp" sourceRef="Gateway_0r4ox3t" targetRef="LoanAcceptedEvent">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{action == "Accepted"}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:endEvent id="LoanRejectedErrorEvent">
+        <bpmn:incoming>Flow_1rxh587</bpmn:incoming>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_05l2abu" errorRef="Error_1di3e60" />
+      </bpmn:endEvent>
+      <bpmn:association id="Association_0xhv0wz" sourceRef="LoanRejectedErrorEvent" targetRef="TextAnnotation_00ectsv" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0oadhuc" sourceRef="Activity_1lfg3w8" targetRef="Event_1cj6hn4" />
+    <bpmn:exclusiveGateway id="Gateway_1rj388t">
+      <bpmn:incoming>Flow_07gyhyt</bpmn:incoming>
+      <bpmn:outgoing>Flow_161nhaj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ays0oi</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_161nhaj" sourceRef="Gateway_1rj388t" targetRef="Activity_1lfg3w8">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{approved}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ays0oi" sourceRef="Gateway_1rj388t" targetRef="upload_pdf_activity">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{not approved}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1xuz123" sourceRef="LoanRejectedCaptureEvent" targetRef="upload_pdf_activity" />
+    <bpmn:boundaryEvent id="LoanRejectedCaptureEvent" attachedToRef="Activity_1lfg3w8">
+      <bpmn:outgoing>Flow_1xuz123</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0g47utm" errorRef="Error_1di3e60" />
+    </bpmn:boundaryEvent>
+    <bpmn:textAnnotation id="TextAnnotation_06zkm31">
+      <bpmn:text>Upload Adhar Card</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_04g3emu" sourceRef="upload_pdf_activity" targetRef="TextAnnotation_06zkm31" />
+    <bpmn:textAnnotation id="TextAnnotation_1n6w210">
+      <bpmn:text>Read and Approve Doc</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_05eeghe" sourceRef="download_pdf_activity" targetRef="TextAnnotation_1n6w210" />
+    <bpmn:textAnnotation id="TextAnnotation_0rsmp82">
+      <bpmn:text>Invoke Loan BPMN</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0fdt6bj" sourceRef="CallLoanProcessActivity" targetRef="TextAnnotation_0rsmp82" />
+    <bpmn:textAnnotation id="TextAnnotation_00ectsv">
+      <bpmn:text>Loan Rejected Error Event</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_02vxecv">
+      <bpmn:text>Capture Loan Rejected Error</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0cspqm4" sourceRef="LoanRejectedCaptureEvent" targetRef="TextAnnotation_02vxecv" />
+  </bpmn:process>
+  <bpmn:error id="Error_1di3e60" name="loanrejected" errorCode="10000" camunda:errorMessage="Reload document, Loan Rejected" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="uploaddoc">
+      <bpmndi:BPMNShape id="TextAnnotation_06zkm31_di" bpmnElement="TextAnnotation_06zkm31" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="280" y="80" width="120" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1n6w210_di" bpmnElement="TextAnnotation_1n6w210" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="480" y="80" width="100" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0rsmp82_di" bpmnElement="TextAnnotation_0rsmp82" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="920" y="40" width="100" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_00ectsv_di" bpmnElement="TextAnnotation_00ectsv" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1120" y="40" width="100" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_02vxecv_di" bpmnElement="TextAnnotation_02vxecv" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1080" y="390" width="100" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_07gyhyt_di" bpmnElement="Flow_07gyhyt">
+        <di:waypoint x="530" y="190" />
+        <di:waypoint x="625" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ud424n_di" bpmnElement="Flow_1ud424n">
+        <di:waypoint x="370" y="190" />
+        <di:waypoint x="430" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09trrpe_di" bpmnElement="Flow_09trrpe">
+        <di:waypoint x="215" y="190" />
+        <di:waypoint x="270" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0oadhuc_di" bpmnElement="Flow_0oadhuc">
+        <di:waypoint x="1290" y="200" />
+        <di:waypoint x="1362" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_161nhaj_di" bpmnElement="Flow_161nhaj">
+        <di:waypoint x="675" y="190" />
+        <di:waypoint x="780" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ays0oi_di" bpmnElement="Flow_0ays0oi">
+        <di:waypoint x="650" y="165" />
+        <di:waypoint x="650" y="40" />
+        <di:waypoint x="320" y="40" />
+        <di:waypoint x="320" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xuz123_di" bpmnElement="Flow_1xuz123">
+        <di:waypoint x="1020" y="348" />
+        <di:waypoint x="1020" y="440" />
+        <di:waypoint x="320" y="440" />
+        <di:waypoint x="320" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_169phg6_di" bpmnElement="upload_pdf_activity" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="270" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09s9jbp_di" bpmnElement="download_pdf_activity" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="430" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1rj388t_di" bpmnElement="Gateway_1rj388t" isMarkerVisible="true">
+        <dc:Bounds x="625" y="165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1cj6hn4_di" bpmnElement="Event_1cj6hn4">
+        <dc:Bounds x="1362" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_04g3emu_di" bpmnElement="Association_04g3emu">
+        <di:waypoint x="333" y="150" />
+        <di:waypoint x="342" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_05eeghe_di" bpmnElement="Association_05eeghe">
+        <di:waypoint x="501" y="150" />
+        <di:waypoint x="516" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1lfg3w8_di" bpmnElement="Activity_1lfg3w8" isExpanded="true">
+        <dc:Bounds x="780" y="102" width="510" height="228" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0udpldl_di" bpmnElement="Flow_0udpldl">
+        <di:waypoint x="836" y="205" />
+        <di:waypoint x="890" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0km1in1_di" bpmnElement="Flow_0km1in1">
+        <di:waypoint x="990" y="205" />
+        <di:waypoint x="1045" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rxh587_di" bpmnElement="Flow_1rxh587">
+        <di:waypoint x="1070" y="180" />
+        <di:waypoint x="1070" y="140" />
+        <di:waypoint x="1132" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p8nlgp_di" bpmnElement="Flow_0p8nlgp">
+        <di:waypoint x="1070" y="230" />
+        <di:waypoint x="1070" y="270" />
+        <di:waypoint x="1132" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_11kpjpx_di" bpmnElement="Event_11kpjpx">
+        <dc:Bounds x="800" y="187" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0q2jteh_di" bpmnElement="CallLoanProcessActivity" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="890" y="165" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0r4ox3t_di" bpmnElement="Gateway_0r4ox3t" isMarkerVisible="true">
+        <dc:Bounds x="1045" y="180" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1d6s42b_di" bpmnElement="LoanAcceptedEvent" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="1132" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0g44qrq_di" bpmnElement="LoanRejectedErrorEvent" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1132" y="122" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0xhv0wz_di" bpmnElement="Association_0xhv0wz">
+        <di:waypoint x="1154" y="123" />
+        <di:waypoint x="1164" y="81" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0fdt6bj_di" bpmnElement="Association_0fdt6bj">
+        <di:waypoint x="948" y="165" />
+        <di:waypoint x="965" y="81" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0cspqm4_di" bpmnElement="Association_0cspqm4">
+        <di:waypoint x="1035" y="340" />
+        <di:waypoint x="1108" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_170ss24_di" bpmnElement="LoanRejectedCaptureEvent" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1002" y="312" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

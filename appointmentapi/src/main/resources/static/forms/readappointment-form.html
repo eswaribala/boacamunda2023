@@ -1,0 +1,96 @@
+<!--
+You can use this form through Camunda Tasklist
+by setting the formKey of a BPMN User Task to:
+embedded:/forms/readappointment-form.html
+-->
+
+<form role="form">
+
+<!-- two-column layout -->
+<div class="container-fluid">
+<div class="row">
+  <div class="col-md-4">
+
+  <!-- table for listing existing variables -->
+  <script cam-script type="text/form-script">
+    var variableManager = camForm.variableManager;
+   //$scope.options.hideCompleteButton = true;
+     
+   $scope.accept = function($event) {
+    //alert("hi");
+          $event.preventDefault();
+          $event.stopPropagation();
+ camForm.variableManager.variableManager.createVariable({
+                name: 'status',
+                type: 'String',
+                value: 'accepted',
+                isDirty: true
+            });
+        
+          $event.submitPrevented = false;
+          camForm.submit();
+          $scope.complete();     
+        };
+$scope.reject = function($event) {
+          $event.preventDefault();
+          $event.stopPropagation();
+          camForm.variableManager.variableManager.createVariable({
+                name: 'status',
+                type: 'String',
+                value: 'rejected',
+                isDirty: true
+            });
+        
+
+          $event.submitPrevented = false;
+          camForm.submit();
+          $scope.complete();  
+        };
+  
+    camForm.on('form-loaded', function() {
+      // variables that are not already used in cam-variable bindings
+      // must be fetched explicitly
+    //  camForm.variableManager.fetchVariable('appointments');
+//      camForm.variableManager.fetchVariable('');
+    });
+
+    camForm.on('variables-fetched', function() {
+      // access to all process variables after the form has loaded
+      $scope.variables = variableManager.variables;
+//      debugger;
+    });
+  </script>
+  <h3>Process Variables</h3>
+  <table class="table table-striped">
+    
+
+   
+    <tr ng-repeat="variable in variables">
+      <!-- TODO ignore file and object variables -->
+      <td>{{variable}}</td>
+   
+    </tr>
+  </table>
+
+  
+</div>
+</div>  
+ 
+  <!-- checkbox -->
+  <div class="form-group">
+    <label for="approved" class="col-sm-2 control-label">Approve?</label>
+    <div class="col-sm-10">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox"
+                 name="approved"
+                 cam-variable-name="approved"
+                 cam-variable-type="Boolean"
+                 checked="checked"
+                 class="form-control" />
+          approved
+        </label>
+      </div>
+    </div>
+  </div>
+</form>

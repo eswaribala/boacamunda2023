@@ -1,0 +1,74 @@
+<!--
+You can use this form through Camunda Tasklist
+by setting the formKey of a BPMN User Task to:
+embedded:/forms/rm-appointment-details.html
+-->
+
+<form name="taskForm" class="form-horizontal" role="form">
+
+  <!-- read-only field -->
+  <div class="form-group">
+    <label for="customerId" class="col-sm-2 control-label">CustomerId</label>
+    <div class="col-sm-10">
+      <input type="text"
+             name="customerId"
+             cam-variable-name="customerId"
+             readonly="true"
+             class="form-control" />      
+    </div>
+  </div>
+<!-- read-only field -->
+  <div class="form-group">
+    <label for="doa" class="col-sm-2 control-label">DOA</label>
+    <div class="col-sm-10">
+      <input type="text"
+             name="doa"
+             cam-variable-name="doa"
+             readonly="true"
+             class="form-control" />      
+    </div>
+  </div>
+  <!-- read-only field -->
+  <div class="form-group">
+    <label for="time" class="col-sm-2 control-label">Time</label>
+    <div class="col-sm-10">
+      <input type="text"
+             name="time"
+             cam-variable-name="time"
+             readonly="true"
+             class="form-control" />      
+    </div>
+  </div>
+  <!-- read-only field -->
+  <div class="form-group">
+    <label for="reason" class="col-sm-2 control-label">Reason</label>
+    <div class="col-sm-10">
+      <input type="text"
+             name="reason"
+             cam-variable-name="reason"
+             readonly="true"
+             class="form-control" />      
+    </div>
+  </div>
+  <!-- checkbox -->
+  <div class="form-group">
+    <label for="approved" class="col-sm-2 control-label">Approve?</label>
+    <div class="col-sm-10">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox"
+                 name="approved"
+                 cam-variable-name="approved"
+                 cam-variable-type="Boolean"
+                 checked="checked"
+                 class="form-control" />
+          approved
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <script cam-script type="text/form-script">
+  // custom JavaScript goes here
+  </script>
+</form>

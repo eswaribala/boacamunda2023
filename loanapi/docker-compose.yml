@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=boaloan2021db
+    volumes:
+      - /data/mysql
+    healthcheck:        
+        interval: 30s
+        timeout: 10s
+        retries: 5
+  
+  loan-app:
+    image: loan-app
+    build:
+      context: ./
+      dockerfile: dockerfile
+    depends_on:
+      - mysql
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    ports:
+      - 7076:7070
+    volumes:
+      - /data/compose-app
+      
+      
+  
+      

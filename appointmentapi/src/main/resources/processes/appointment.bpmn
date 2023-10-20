@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0">
+  <bpmn:process id="appointmentapi" name="appointmentapi" isExecutable="true">
+    <bpmn:sequenceFlow id="SequenceFlow1" sourceRef="StartEvent" targetRef="SendAppointmentTask" />
+    <bpmn:endEvent id="EndEvent" name="Request&#10;processed">
+      <bpmn:incoming>Flow_1c7jszb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="StartEvent" name="Request&#10;received">
+      <bpmn:outgoing>SequenceFlow1</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0y3oavo" messageRef="Message_0h15vb9" />
+    </bpmn:startEvent>
+    <bpmn:sendTask id="SendAppointmentTask" name="Send Appointment to RM" camunda:delegateExpression="${emaildelegate}">
+      <bpmn:incoming>SequenceFlow1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ypvw4l</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0ypvw4l" sourceRef="SendAppointmentTask" targetRef="RMWilling_Gateway" />
+    <bpmn:eventBasedGateway id="RMWilling_Gateway">
+      <bpmn:incoming>Flow_0ypvw4l</bpmn:incoming>
+      <bpmn:outgoing>Flow_06zekag</bpmn:outgoing>
+      <bpmn:outgoing>Flow_09inw1i</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="RMAcceptedMessage">
+      <bpmn:incoming>Flow_06zekag</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kuk22y</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_17md2xc" messageRef="Message_127xw92" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_06zekag" sourceRef="RMWilling_Gateway" targetRef="RMAcceptedMessage" />
+    <bpmn:intermediateCatchEvent id="RMNotWillingMessage">
+      <bpmn:incoming>Flow_09inw1i</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c7jszb</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_15hbqps" messageRef="Message_1a2rb3h" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_09inw1i" sourceRef="RMWilling_Gateway" targetRef="RMNotWillingMessage" />
+    <bpmn:sequenceFlow id="Flow_1kuk22y" sourceRef="RMAcceptedMessage" targetRef="RMApproval" />
+    <bpmn:userTask id="RMApproval" name="RM Reads Appointment and Approves" camunda:formKey="embedded:/forms/rm-appointment-details.html" camunda:assignee="demo">
+      <bpmn:incoming>Flow_1kuk22y</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sk3ttx</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="UpdateScheduleMessageTask" attachedToRef="RMApproval">
+      <bpmn:outgoing>Flow_00g7tnl</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_14yssfg" messageRef="Message_1rmvboa" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_00g7tnl" sourceRef="UpdateScheduleMessageTask" targetRef="UpdatedScheduleTask" />
+    <bpmn:userTask id="UpdatedScheduleTask" name="RM reads updated Schedule" camunda:assignee="demo">
+      <bpmn:incoming>Flow_00g7tnl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0peph39</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1sk3ttx" sourceRef="RMApproval" targetRef="SaveAppointmentTask" />
+    <bpmn:serviceTask id="SaveAppointmentTask" name="Save Appointment" camunda:class="com.boa.appointmentapi.delegates.SaveAppointmentDelegate">
+      <bpmn:incoming>Flow_1sk3ttx</bpmn:incoming>
+      <bpmn:incoming>Flow_1qr2244</bpmn:incoming>
+      <bpmn:outgoing>Flow_1528cj7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0ki40dv">
+      <bpmn:incoming>Flow_1fyt2j0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1528cj7" sourceRef="SaveAppointmentTask" targetRef="ShowAppointments" />
+    <bpmn:sequenceFlow id="Flow_047u1nb" sourceRef="ShowAppointments" targetRef="Activity_1crnej6" />
+    <bpmn:sequenceFlow id="Flow_0peph39" sourceRef="UpdatedScheduleTask" targetRef="Gateway_1u9wecl" />
+    <bpmn:eventBasedGateway id="Gateway_1u9wecl">
+      <bpmn:incoming>Flow_0peph39</bpmn:incoming>
+      <bpmn:outgoing>Flow_02xo8iu</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1f24vj1</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="UpdatedScheduleNotWillingMessage">
+      <bpmn:incoming>Flow_02xo8iu</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kp4wmx</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_01tzjkh" messageRef="Message_0h2zx1s" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_02xo8iu" sourceRef="Gateway_1u9wecl" targetRef="UpdatedScheduleNotWillingMessage" />
+    <bpmn:intermediateCatchEvent id="UpdatedScheduleWillingMessage">
+      <bpmn:incoming>Flow_1f24vj1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qr2244</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1vvn8y8" messageRef="Message_1edmqfe" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1f24vj1" sourceRef="Gateway_1u9wecl" targetRef="UpdatedScheduleWillingMessage" />
+    <bpmn:sequenceFlow id="Flow_1qr2244" sourceRef="UpdatedScheduleWillingMessage" targetRef="SaveAppointmentTask" />
+    <bpmn:endEvent id="Event_1e225j9">
+      <bpmn:incoming>Flow_1kp4wmx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1kp4wmx" sourceRef="UpdatedScheduleNotWillingMessage" targetRef="Event_1e225j9" />
+    <bpmn:sequenceFlow id="Flow_1c7jszb" sourceRef="RMNotWillingMessage" targetRef="EndEvent" />
+    <bpmn:serviceTask id="ShowAppointments" name="Show all Appointments to RM" camunda:delegateExpression="#{receiveappointments}">
+      <bpmn:incoming>Flow_1528cj7</bpmn:incoming>
+      <bpmn:outgoing>Flow_047u1nb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1fyt2j0" sourceRef="Activity_1crnej6" targetRef="Event_0ki40dv" />
+    <bpmn:userTask id="Activity_1crnej6" name="Show All Appointments to RM" camunda:formKey="embedded:/forms/readappointment-form.html">
+      <bpmn:incoming>Flow_047u1nb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fyt2j0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:textAnnotation id="TextAnnotation_0yzeqgt">
+      <bpmn:text>Customer Sends Request</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0o9130k" sourceRef="StartEvent" targetRef="TextAnnotation_0yzeqgt" />
+    <bpmn:textAnnotation id="TextAnnotation_12r0a16">
+      <bpmn:text>Generate Token /Email to RM</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_026ncuo" sourceRef="SendAppointmentTask" targetRef="TextAnnotation_12r0a16" />
+    <bpmn:textAnnotation id="TextAnnotation_17dj2e9">
+      <bpmn:text>RM Willing Message</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1bi3uxy" sourceRef="RMAcceptedMessage" targetRef="TextAnnotation_17dj2e9" />
+    <bpmn:textAnnotation id="TextAnnotation_04obwwf">
+      <bpmn:text>RM Not Willing</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0ftaga3" sourceRef="RMNotWillingMessage" targetRef="TextAnnotation_04obwwf" />
+    <bpmn:textAnnotation id="TextAnnotation_03aiq3k">
+      <bpmn:text>RM Approval</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1ncslt3" sourceRef="RMApproval" targetRef="TextAnnotation_03aiq3k" />
+    <bpmn:textAnnotation id="TextAnnotation_1daxlmo">
+      <bpmn:text>View All Appointments</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0nq4jav" sourceRef="ShowAppointments" targetRef="TextAnnotation_1daxlmo" />
+    <bpmn:textAnnotation id="TextAnnotation_1oyrq5p">
+      <bpmn:text>RM Not Willing</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_037oo86" sourceRef="UpdatedScheduleNotWillingMessage" targetRef="TextAnnotation_1oyrq5p" />
+    <bpmn:textAnnotation id="TextAnnotation_1d2wqws">
+      <bpmn:text>RM Willing</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0z1vlii" sourceRef="UpdatedScheduleWillingMessage" targetRef="TextAnnotation_1d2wqws" />
+  </bpmn:process>
+  <bpmn:message id="Message_127xw92" name="RMWilling" />
+  <bpmn:message id="Message_1a2rb3h" name="RMNotWilling" />
+  <bpmn:message id="Message_1rmvboa" name="UpdateSchedule" />
+  <bpmn:message id="Message_1edmqfe" name="UpdatedScheduleWilling" />
+  <bpmn:message id="Message_0h2zx1s" name="UpdatedScheduleNotWilling" />
+  <bpmn:message id="Message_0h15vb9" name="sendrequest" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="appointmentapi">
+      <bpmndi:BPMNEdge id="Flow_1c7jszb_di" bpmnElement="Flow_1c7jszb">
+        <di:waypoint x="658" y="620" />
+        <di:waypoint x="732" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kp4wmx_di" bpmnElement="Flow_1kp4wmx">
+        <di:waypoint x="1208" y="160" />
+        <di:waypoint x="1272" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qr2244_di" bpmnElement="Flow_1qr2244">
+        <di:waypoint x="1090" y="298" />
+        <di:waypoint x="1090" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f24vj1_di" bpmnElement="Flow_1f24vj1">
+        <di:waypoint x="1090" y="185" />
+        <di:waypoint x="1090" y="262" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02xo8iu_di" bpmnElement="Flow_02xo8iu">
+        <di:waypoint x="1115" y="160" />
+        <di:waypoint x="1172" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0peph39_di" bpmnElement="Flow_0peph39">
+        <di:waypoint x="1010" y="160" />
+        <di:waypoint x="1065" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_047u1nb_di" bpmnElement="Flow_047u1nb">
+        <di:waypoint x="1320" y="440" />
+        <di:waypoint x="1360" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1528cj7_di" bpmnElement="Flow_1528cj7">
+        <di:waypoint x="1140" y="440" />
+        <di:waypoint x="1220" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sk3ttx_di" bpmnElement="Flow_1sk3ttx">
+        <di:waypoint x="910" y="440" />
+        <di:waypoint x="1040" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00g7tnl_di" bpmnElement="Flow_00g7tnl">
+        <di:waypoint x="860" y="382" />
+        <di:waypoint x="860" y="160" />
+        <di:waypoint x="910" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kuk22y_di" bpmnElement="Flow_1kuk22y">
+        <di:waypoint x="658" y="440" />
+        <di:waypoint x="810" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09inw1i_di" bpmnElement="Flow_09inw1i">
+        <di:waypoint x="550" y="565" />
+        <di:waypoint x="550" y="620" />
+        <di:waypoint x="622" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06zekag_di" bpmnElement="Flow_06zekag">
+        <di:waypoint x="550" y="515" />
+        <di:waypoint x="550" y="440" />
+        <di:waypoint x="622" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ypvw4l_di" bpmnElement="Flow_0ypvw4l">
+        <di:waypoint x="430" y="540" />
+        <di:waypoint x="525" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_08va5r8_di" bpmnElement="SequenceFlow1">
+        <di:waypoint x="209" y="540" />
+        <di:waypoint x="330" y="540" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="228" y="95" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fyt2j0_di" bpmnElement="Flow_1fyt2j0">
+        <di:waypoint x="1460" y="440" />
+        <di:waypoint x="1532" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0fkea3f_di" bpmnElement="EndEvent">
+        <dc:Bounds x="732" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="724" y="656" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0d0o0wy_di" bpmnElement="StartEvent" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="173" y="522" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="171" y="558" width="42" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0o6fuy4_di" bpmnElement="SendAppointmentTask" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="330" y="500" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_153l53c_di" bpmnElement="RMWilling_Gateway" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="525" y="515" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lkciti_di" bpmnElement="RMAcceptedMessage" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="622" y="422" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_07w7f1v_di" bpmnElement="RMNotWillingMessage" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="622" y="602" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0c5nd75_di" bpmnElement="RMApproval" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="810" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_107ij4b_di" bpmnElement="UpdatedScheduleTask" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="910" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17uboyb_di" bpmnElement="SaveAppointmentTask" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="1040" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1w8es4s_di" bpmnElement="Gateway_1u9wecl" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="1065" y="135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0viv3aj_di" bpmnElement="UpdatedScheduleNotWillingMessage" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1172" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09imevr_di" bpmnElement="UpdatedScheduleWillingMessage" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="1072" y="262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1e225j9_di" bpmnElement="Event_1e225j9">
+        <dc:Bounds x="1272" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1okg61l_di" bpmnElement="ShowAppointments" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="1220" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0yzeqgt_di" bpmnElement="TextAnnotation_0yzeqgt" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="180" y="440" width="100" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_12r0a16_di" bpmnElement="TextAnnotation_12r0a16" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="340" y="440" width="100" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_17dj2e9_di" bpmnElement="TextAnnotation_17dj2e9" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="600" y="350" width="100" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_04obwwf_di" bpmnElement="TextAnnotation_04obwwf">
+        <dc:Bounds x="590" y="670" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_03aiq3k_di" bpmnElement="TextAnnotation_03aiq3k" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="890" y="300" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1daxlmo_di" bpmnElement="TextAnnotation_1daxlmo" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="1250" y="325" width="100" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1oyrq5p_di" bpmnElement="TextAnnotation_1oyrq5p" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="1140" y="80" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1d2wqws_di" bpmnElement="TextAnnotation_1d2wqws" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="1160" y="240" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ki40dv_di" bpmnElement="Event_0ki40dv">
+        <dc:Bounds x="1532" y="422" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1i0z6if_di" bpmnElement="Activity_1crnej6" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="1360" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_13blzg0_di" bpmnElement="UpdateScheduleMessageTask" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="842" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0o9130k_di" bpmnElement="Association_0o9130k">
+        <di:waypoint x="198" y="524" />
+        <di:waypoint x="218" y="481" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_026ncuo_di" bpmnElement="Association_026ncuo">
+        <di:waypoint x="385" y="500" />
+        <di:waypoint x="387" y="481" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1bi3uxy_di" bpmnElement="Association_1bi3uxy">
+        <di:waypoint x="642" y="422" />
+        <di:waypoint x="647" y="391" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0ftaga3_di" bpmnElement="Association_0ftaga3">
+        <di:waypoint x="640" y="638" />
+        <di:waypoint x="640" y="670" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ncslt3_di" bpmnElement="Association_1ncslt3">
+        <di:waypoint x="890" y="400" />
+        <di:waypoint x="931" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0nq4jav_di" bpmnElement="Association_0nq4jav">
+        <di:waypoint x="1282" y="400" />
+        <di:waypoint x="1292" y="366" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_037oo86_di" bpmnElement="Association_037oo86">
+        <di:waypoint x="1190" y="142" />
+        <di:waypoint x="1190" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0z1vlii_di" bpmnElement="Association_0z1vlii">
+        <di:waypoint x="1107" y="276" />
+        <di:waypoint x="1160" y="265" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
