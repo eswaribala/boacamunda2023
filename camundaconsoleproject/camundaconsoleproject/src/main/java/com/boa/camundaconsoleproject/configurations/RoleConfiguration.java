@@ -80,7 +80,7 @@ public class RoleConfiguration {
 		
 	    
         log.info("Role job done...");		
-		return roleValues;
+		return rolesValue;
 		
 	}
 }
