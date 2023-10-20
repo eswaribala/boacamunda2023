@@ -1,6 +1,7 @@
 package com.boa.camundaconsoleproject.configurations;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,28 +45,42 @@ public class RoleConfiguration {
 	}
 	
 	@JobWorker(type = "assign_roles",autoComplete = false)
-	public void assignRoles(final JobClient jobClient, final ActivatedJob activatedJob) throws JsonMappingException, JsonProcessingException {
+	public Map<String,Object> assignRoles(final JobClient jobClient, final ActivatedJob activatedJob) throws JsonMappingException, JsonProcessingException {
 		
 	    Map<String,Object> rolesMap=activatedJob.getVariablesAsMap();
-	    String values=rolesMap.get("roles").toString();
-	System.out.println(values);
-	    Gson gson = new Gson();
-	    Type listType = new TypeToken<List<RoleMapper>>() {
-        }.getType();
-	    List<RoleMapper> roleMappers= new Gson().fromJson(values, listType);
-		System.out.println(roleMappers);
-	    	//assigneeMap.put("assignee", assignee);
-	    	//assigneeMap.put("candidateusers", "");
+	    
+	    String rolesData=rolesMap.get("roles").toString();
+	    Map<String,Object> rolesValue=new HashMap<>();
+	    
+		if(rolesData!=null) {
+			rolesValue.put("assignee","vhebcompany@gmail.com");
+			
+		  	
         jobClient.newCompleteCommand(activatedJob.getKey())
-             //  .variables(assigneeMap)
+             .variables(rolesValue)
                 .send()
                 .exceptionally(throwable -> {
                     throw new RuntimeException("Could not complete job " + jobClient, throwable);
                 });
-       
+		}
+		else
+		{
+			
+				rolesValue.put("assignee","");
+				
+			  	
+	        jobClient.newCompleteCommand(activatedJob.getKey())
+	             .variables(rolesValue)
+	                .send()
+	                .exceptionally(throwable -> {
+	                    throw new RuntimeException("Could not complete job " + jobClient, throwable);
+	                });
+			
+		}
+		
 	    
         log.info("Role job done...");		
-		//return assigneeMap;
+		return roleValues;
 		
 	}
 }
