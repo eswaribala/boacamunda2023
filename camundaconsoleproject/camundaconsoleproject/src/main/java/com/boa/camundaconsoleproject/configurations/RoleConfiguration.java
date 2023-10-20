@@ -51,10 +51,10 @@ public class RoleConfiguration {
 	    
 	    String rolesData=rolesMap.get("roles").toString();
 	    Map<String,Object> rolesValue=new HashMap<>();
-	    
+	    String[] values= {};
 		if(rolesData!=null) {
 			rolesValue.put("assignee","vhebcompany@gmail.com");
-			
+			rolesValue.put("candidateusers",values);
 		  	
         jobClient.newCompleteCommand(activatedJob.getKey())
              .variables(rolesValue)
@@ -67,7 +67,8 @@ public class RoleConfiguration {
 		{
 			
 				rolesValue.put("assignee","");
-				
+				rolesValue.put("candidateusers",values);
+			  	
 			  	
 	        jobClient.newCompleteCommand(activatedJob.getKey())
 	             .variables(rolesValue)
